@@ -1,0 +1,51 @@
+group = 'net.evecom'
+version = ''
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'war'
+
+    // JDK 8
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        maven { //第三方jar包
+            url "${nexusUrl}/content/repositories/thirdparty"
+        }
+        maven { // 私服，仓库使用JCenter 远程库
+            url "${nexusUrl}/content/repositories/jcenter"
+        }
+    }
+
+
+    dependencies {
+        // thymeleaf 包含starter所有依赖，所以正常第一条不需要
+        // implementation('org.springframework.boot:spring-boot-starter-web')
+        // 编译时使用web包，打包时使用Tomcat包
+        compile("org.springframework.boot:spring-boot-starter-web")
+        providedCompile("org.springframework.boot:spring-boot-starter-tomcat")
+        implementation('org.springframework.boot:spring-boot-starter-jdbc')
+        testImplementation('org.springframework.boot:spring-boot-starter-test')
+        // hot publish. 热部署
+        // idea需要设置自动编译File-Settings-Compiler-Build Project automatically
+        // ctrl + shift + alt + /,选择Registry,勾上 Compiler autoMake allow when app running
+        // implementation('org.springframework.boot:spring-boot-devtools')
+        // templates.spring官方模板引擎，抛弃jsp
+        implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+        // oracle jdbc,只能本地私服加载
+        implementation('org.oracle:ojdbc:11.2.0.2.0')
+        // log,使用注解，同时Idea安装插件：Lombok Plugin，并允许注解Settings -> Compiler -> Annotation Processors
+        implementation('org.projectlombok:lombok')
+        // 引入 自定义核心包
+        compile project(':demo-core')
+
+        compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '1.3.0'
+        compile group: 'com.baomidou', name: 'mybatis-plus', version: '3.3.1'
+        compile group: 'com.baomidou', name: 'mybatis-plus-core', version: '3.3.1'
+    }
+}
+
+
